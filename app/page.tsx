@@ -1,101 +1,152 @@
-import Image from "next/image";
+"use client"
+
+import { useState, useEffect, useCallback } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Settings } from "@/components/Settings"
+import { Help } from "@/components/Help"
+import { AnimatedObject } from "@/components/AnimatedObject"
+import { useTimer } from "@/hooks/useTimer"
+import { formatTime } from "@/utils/formatTime"
+import { Cog, HelpCircle, Maximize, Minimize } from "lucide-react"
+import { getContrastColor } from "@/utils/getContrastColor"
+
+const APP_NAME = "TimeTrail"
+
+const themes = [
+  { name: "Car on Road", object: "/images/PixelCar.png", background: "/images/City1/Bright/City1.png" },
+  { name: "Train in Mountains", object: "/images/train.png", background: "/images/mountain-railway.jpg" },
+  { name: "Boat in Ocean", object: "/images/boat.png", background: "/images/ocean.jpg" },
+  { name: "Spaceship in Space", object: "/images/spaceship.png", background: "/images/space.jpg" },
+]
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [duration, setDuration] = useState(60)
+  const [theme, setTheme] = useState(themes[0])
+  const [font, setFont] = useState("font-mono")  // Updated to 'Monospace'
+  const [roundedButtons, setRoundedButtons] = useState(true)
+  const { time, isRunning, start, reset, hasEnded } = useTimer(duration)
+  const [progress, setProgress] = useState(0)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const [showSettings, setShowSettings] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
+  const [contrastColor, setContrastColor] = useState("white")
+  const [isFullScreen, setIsFullScreen] = useState(false)
+
+  useEffect(() => {
+    const img = new Image()
+    img.crossOrigin = "Anonymous"
+    img.src = theme.background
+    img.onload = () => {
+      const color = getContrastColor(img)
+      setContrastColor(color)
+    }
+  }, [theme])
+
+  useEffect(() => {
+    let animationFrame: number
+    const startTime = Date.now()
+
+    const animate = () => {
+      const currentTime = Date.now()
+      const elapsedTime = currentTime - startTime
+      const newProgress = Math.min(elapsedTime / (duration * 1000), 1)
+      setProgress(newProgress)
+
+      if (newProgress < 1 && isRunning) {
+        animationFrame = requestAnimationFrame(animate)
+      }
+    }
+
+    if (isRunning) {
+      animationFrame = requestAnimationFrame(animate)
+    } else {
+      setProgress(0)
+    }
+
+    return () => cancelAnimationFrame(animationFrame)
+  }, [isRunning, duration])
+
+  useEffect(() => {
+    if (hasEnded) {
+      // Play sound
+      const audio = new Audio("/notification.mp3")
+      audio.play()
+
+      // Visual notification
+      alert("Timer has ended!")
+    }
+  }, [hasEnded])
+
+  const toggleFullScreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen()
+      setIsFullScreen(true)
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+        setIsFullScreen(false)
+      }
+    }
+  }, [])
+
+  const buttonClass = `${roundedButtons ? "rounded-full" : "rounded-md"} bg-[#171D2A] hover:bg-[#494B42] hover:text-white text-white`
+
+  return (
+    <main
+      className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden ${font}`}
+      style={{ backgroundImage: `url(${theme.background})`, backgroundSize: "cover", backgroundPosition: "center" }}
+    >
+      <div className="absolute top-4 left-4 text-3xl font-bold px-4 py-2 rounded-lg bg-opacity-60 bg-gray-800 border border-gray-600" style={{ color: contrastColor }}>
+        {APP_NAME}
+      </div>
+      <div className="absolute top-4 right-4 flex space-x-2">
+        <Button variant="outline" size="icon" className={buttonClass} onClick={() => setShowSettings(true)}>
+          <Cog className="h-5 w-5" />
+        </Button>
+        <Button variant="outline" size="icon" className={buttonClass} onClick={() => setShowHelp(true)}>
+          <HelpCircle className="h-5 w-5" />
+        </Button>
+        <Button variant="outline" size="icon" className={buttonClass} onClick={toggleFullScreen}>
+          {isFullScreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+        </Button>
+      </div>
+
+      <div className="z-10 text-center">
+        <div
+          className="text-[12rem] font-extrabold px-8 mb-8 pb-2 rounded-2xl bg-gray-900 bg-opacity-95 shadow-lg tracking-wide"
+          style={{ color: contrastColor }}
+        >
+          {formatTime(time)}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <div className="flex space-x-4 justify-center">
+          <Input
+            type="number"
+            value={duration}
+            onChange={(e) => setDuration(Number(e.target.value))}
+            className="w-28 h-14 text-xl bg-white bg-opacity-80"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+          <Button onClick={isRunning ? reset : start} className={`${buttonClass} h-14 px-8 text-xl hover:bg-[#494B42]`}>
+            {isRunning ? "Reset" : "Start"}
+          </Button>
+        </div>
+      </div>
+
+      <AnimatedObject src={theme.object} progress={progress} />
+
+      <Settings
+        show={showSettings}
+        onClose={() => setShowSettings(false)}
+        themes={themes}
+        currentTheme={theme}
+        onThemeChange={setTheme}
+        font={font}
+        onFontChange={setFont}
+        roundedButtons={roundedButtons}
+        onRoundedButtonsChange={setRoundedButtons}
+      />
+
+      <Help show={showHelp} onClose={() => setShowHelp(false)} />
+    </main>
+  )
 }
