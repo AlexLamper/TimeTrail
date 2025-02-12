@@ -93,43 +93,70 @@ export default function Home() {
     setProgress(0)
   }
 
-  const buttonClass = `${roundedButtons ? "rounded-full" : "rounded-md"} bg-[#171D2A] hover:bg-[#494B42] hover:text-white text-white`
+  const buttonClass = `${
+    roundedButtons ? "rounded-full" : "rounded-md"
+  } bg-[#171D2A] hover:bg-[#494B42] hover:text-white text-white`
 
   return (
     <main
       className={`min-h-screen flex flex-col items-center justify-center relative overflow-hidden ${font}`}
       style={{ backgroundImage: `url(${theme.background})`, backgroundSize: "cover", backgroundPosition: "center" }}
     >
-      <div className="absolute top-4 left-4 text-3xl font-bold px-4 py-2 rounded-lg bg-opacity-60 bg-gray-800 border border-gray-600" style={{ color: contrastColor }}>
+      <div
+        className="absolute top-4 left-4 text-xl sm:text-2xl md:text-3xl font-bold px-3 py-1 sm:px-4 sm:py-2 rounded-lg bg-opacity-60 bg-gray-800 border border-gray-600"
+        style={{ color: contrastColor }}
+      >
         {APP_NAME}
       </div>
       <div className="absolute top-4 right-4 flex space-x-2">
-        <Button variant="outline" size="icon" className={buttonClass} onClick={() => setShowSettings(true)}>
-          <Cog className="h-5 w-5" />
+        <Button
+          variant="outline"
+          size="icon"
+          className={`${buttonClass} w-8 h-8 sm:w-10 sm:h-10`}
+          onClick={() => setShowSettings(true)}
+        >
+          <Cog className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
-        <Button variant="outline" size="icon" className={buttonClass} onClick={() => setShowHelp(true)}>
-          <HelpCircle className="h-5 w-5" />
+        <Button
+          variant="outline"
+          size="icon"
+          className={`${buttonClass} w-8 h-8 sm:w-10 sm:h-10`}
+          onClick={() => setShowHelp(true)}
+        >
+          <HelpCircle className="h-4 w-4 sm:h-5 sm:w-5" />
         </Button>
-        <Button variant="outline" size="icon" className={buttonClass} onClick={toggleFullScreen}>
-          {isFullScreen ? <Minimize className="h-5 w-5" /> : <Maximize className="h-5 w-5" />}
+        <Button
+          variant="outline"
+          size="icon"
+          className={`${buttonClass} w-8 h-8 sm:w-10 sm:h-10`}
+          onClick={toggleFullScreen}
+        >
+          {isFullScreen ? (
+            <Minimize className="h-4 w-4 sm:h-5 sm:w-5" />
+          ) : (
+            <Maximize className="h-4 w-4 sm:h-5 sm:w-5" />
+          )}
         </Button>
       </div>
 
-      <div className="z-10 text-center">
+      <div className="z-10 text-center px-4 sm:px-0">
         <div
-          className="text-[12rem] font-extrabold px-8 mb-8 pb-2 rounded-2xl bg-gray-900 bg-opacity-95 shadow-lg tracking-wide"
+          className="text-5xl sm:text-7xl md:text-8xl lg:text-[12rem] font-extrabold px-4 sm:px-6 md:px-8 mb-4 sm:mb-6 md:mb-8 pb-2 rounded-2xl bg-gray-900 bg-opacity-95 shadow-lg tracking-wide"
           style={{ color: contrastColor }}
         >
           {formatTime(time)}
         </div>
-        <div className="flex space-x-4 justify-center">
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center items-center">
           <Input
             type="number"
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
-            className="w-28 h-14 text-xl bg-white bg-opacity-80"
+            className="w-28 h-12 sm:h-14 text-lg sm:text-xl bg-white bg-opacity-80"
           />
-          <Button onClick={isRunning ? reset : start} className={`${buttonClass} h-14 px-8 text-xl hover:bg-[#494B42]`}>
+          <Button
+            onClick={isRunning ? reset : start}
+            className={`${buttonClass} h-12 sm:h-14 px-6 sm:px-8 text-lg sm:text-xl hover:bg-[#494B42] w-full sm:w-auto`}
+          >
             {isRunning ? "Reset" : "Start"}
           </Button>
         </div>
@@ -155,3 +182,4 @@ export default function Home() {
     </main>
   )
 }
+

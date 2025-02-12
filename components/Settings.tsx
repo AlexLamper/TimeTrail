@@ -31,29 +31,32 @@ export function Settings({
 }: SettingsProps) {
   return (
     <Dialog open={show} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Settings</DialogTitle>
+          <DialogTitle className="text-xl sm:text-2xl font-bold">Settings</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label>Theme</Label>
+        <div className="space-y-6 py-4">
+          <div className="space-y-2">
+            <Label className="text-base sm:text-lg font-medium">Theme</Label>
             <RadioGroup
               value={currentTheme.name}
               onValueChange={(value) => onThemeChange(themes.find((t) => t.name === value)!)}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-2"
             >
               {themes.map((theme) => (
-                <div key={theme.name} className="flex items-center space-x-2">
+                <div key={theme.name} className="flex items-center space-x-2 bg-gray-100 p-2 rounded-md">
                   <RadioGroupItem value={theme.name} id={theme.name} />
-                  <Label htmlFor={theme.name}>{theme.name}</Label>
+                  <Label htmlFor={theme.name} className="text-sm sm:text-base">
+                    {theme.name}
+                  </Label>
                 </div>
               ))}
             </RadioGroup>
           </div>
-          <div>
-            <Label>Font</Label>
+          <div className="space-y-2">
+            <Label className="text-base sm:text-lg font-medium">Font</Label>
             <Select value={font} onValueChange={onFontChange}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -65,7 +68,9 @@ export function Settings({
           </div>
           <div className="flex items-center space-x-2">
             <Switch id="rounded-buttons" checked={roundedButtons} onCheckedChange={onRoundedButtonsChange} />
-            <Label htmlFor="rounded-buttons">Rounded Buttons</Label>
+            <Label htmlFor="rounded-buttons" className="text-sm sm:text-base">
+              Rounded Buttons
+            </Label>
           </div>
         </div>
       </DialogContent>

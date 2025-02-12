@@ -10,18 +10,18 @@ interface HelpProps {
 export function Help({ show, onClose }: HelpProps) {
   return (
     <Dialog open={show} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold mb-4">How to Use TimeTrail</DialogTitle>
+          <DialogTitle className="text-xl sm:text-2xl font-bold mb-4">How to Use TimeTrail</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
+        <div className="space-y-4 text-sm sm:text-base">
           <section>
-            <h3 className="text-lg font-semibold mb-2">Getting Started</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">Getting Started</h3>
             <p>Welcome to TimeTrail, your interactive and customizable timer application!</p>
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-2">Basic Usage</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">Basic Usage</h3>
             <ol className="list-decimal list-inside space-y-2">
               <li>
                 <strong>Set the Timer:</strong> Enter the desired duration in seconds using the input field.
@@ -40,7 +40,7 @@ export function Help({ show, onClose }: HelpProps) {
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-2">Customization</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">Customization</h3>
             <p>Click the gear icon in the top-right corner to access the settings menu. Here you can:</p>
             <ul className="list-disc list-inside space-y-1">
               <li>
@@ -56,7 +56,7 @@ export function Help({ show, onClose }: HelpProps) {
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-2">Full Screen Mode</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">Full Screen Mode</h3>
             <p>
               Click the expand icon in the top-right corner to enter full screen mode. Click the minimize icon to exit
               full screen mode.
@@ -64,7 +64,7 @@ export function Help({ show, onClose }: HelpProps) {
           </section>
 
           <section>
-            <h3 className="text-lg font-semibold mb-2">Tips for a Great Experience</h3>
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">Tips for a Great Experience</h3>
             <ul className="list-disc list-inside space-y-1">
               <li>Experiment with different themes to find your perfect focus environment.</li>
               <li>Use shorter durations for quick tasks and longer ones for extended focus sessions.</li>
