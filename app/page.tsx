@@ -10,20 +10,21 @@ import { useTimer } from "@/hooks/useTimer"
 import { formatTime } from "@/utils/formatTime"
 import { Cog, HelpCircle, Maximize, Minimize } from "lucide-react"
 import { getContrastColor } from "@/utils/getContrastColor"
+import { TimerEndedScreen } from "@/components/TimeEndedScreen"
 
 const APP_NAME = "TimeTrail"
 
 const themes = [
-  { name: "Car on Road", object: "/images/PixelCar.png", background: "/images/City1/Bright/City1.png" },
+  { name: "Car on Road", object: "/images/PixelCar.png", background: "/images/City1/Pale/City1.png" },
   { name: "Train in Mountains", object: "/images/train.png", background: "/images/mountain-railway.jpg" },
   { name: "Boat in Ocean", object: "/images/boat.png", background: "/images/ocean.jpg" },
   { name: "Spaceship in Space", object: "/images/spaceship.png", background: "/images/space.jpg" },
 ]
 
 export default function Home() {
-  const [duration, setDuration] = useState(60)
+  const [duration, setDuration] = useState(600)
   const [theme, setTheme] = useState(themes[0])
-  const [font, setFont] = useState("font-mono")  // Updated to 'Monospace'
+  const [font, setFont] = useState("font-mono")
   const [roundedButtons, setRoundedButtons] = useState(true)
   const { time, isRunning, start, reset, hasEnded } = useTimer(duration)
   const [progress, setProgress] = useState(0)
@@ -72,9 +73,6 @@ export default function Home() {
       // Play sound
       const audio = new Audio("/notification.mp3")
       audio.play()
-
-      // Visual notification
-      alert("Timer has ended!")
     }
   }, [hasEnded])
 
@@ -89,6 +87,11 @@ export default function Home() {
       }
     }
   }, [])
+
+  const handleReset = () => {
+    reset()
+    setProgress(0)
+  }
 
   const buttonClass = `${roundedButtons ? "rounded-full" : "rounded-md"} bg-[#171D2A] hover:bg-[#494B42] hover:text-white text-white`
 
@@ -147,6 +150,8 @@ export default function Home() {
       />
 
       <Help show={showHelp} onClose={() => setShowHelp(false)} />
+
+      {hasEnded && <TimerEndedScreen onReset={handleReset} />}
     </main>
   )
 }
